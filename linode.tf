@@ -6,14 +6,14 @@ resource "linode_instance" "backend" {
   type      = "g6-nanode-1"
   root_pass = var.instance_password
 
-  stackscript_id = linode_stackscript.add_proxy.id
+  stackscript_id = linode_stackscript.rclone_sync.id
   stackscript_data = {
     SRC_REGION             = var.aws_region
     SRC_BUCKET             = data.aws_s3_bucket.src_bucket.bucket
     SRC_ACCESSKEY          = module.s3_readonly_iam_user.iam_access_key_id
     SRC_SECRETKEY_PASSWORD = module.s3_readonly_iam_user.iam_access_key_secret
-    // jp-osa-1
-    DEST_REGION             = "${var.linode_region}-1"
+    // ex) jp-osa-1
+    DEST_REGION             = data.linode_object_storage_cluster.dest_bucket_cluster.id
     DEST_BUCKET             = linode_object_storage_bucket.dest_bucket.label
     DEST_ACCESSKEY          = linode_object_storage_key.key.access_key
     DEST_SECRETKEY_PASSWORD = linode_object_storage_key.key.secret_key
